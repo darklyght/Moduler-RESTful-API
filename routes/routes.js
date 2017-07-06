@@ -140,12 +140,12 @@ var appRouter = function(app) {
       if (new_module.su_option === true) {
         if (new_module.grade === 'D' || new_module.grade === 'D+' || new_module.grade === 'F') {
           new_module.final_grade = 'U';
-        }
-        else {
+        } else if (new_module.grade !== 'Planned') {
           new_module.final_grade = 'S';
+        } else {
+          new_module.final_grade = 'Planned';
         }
-      }
-      else {
+      } else {
         new_module.final_grade = new_module.grade;
       }
       modules[req.query.semester-1].push(new_module)
@@ -252,12 +252,12 @@ var appRouter = function(app) {
       if (new_module.su_option === true) {
         if (new_module.grade === 'D' || new_module.grade === 'D+' || new_module.grade === 'F') {
           new_module.final_grade = 'U';
-        }
-        else {
+        } else if (new_module.grade !== 'Planned') {
           new_module.final_grade = 'S';
+        } else {
+          new_module.final_grade = 'Planned';
         }
-      }
-      else {
+      } else {
         new_module.final_grade = new_module.grade;
       }
       modules[req.query.semester-1].push(new_module)
@@ -275,16 +275,166 @@ var appRouter = function(app) {
     });
   });
   app.get('/users/modules/update', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing module code'
+      });
+    }
+    if (req.query.credits && req.query.credits !== parseInt(credits)) {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module credits'
+      });
+    }
+    if (req.query.type && req.query.type !== 'ULR' && req.query.type !== 'FLR' && req.query.type !== 'RCM' && req.query.type !== 'TE' && req.query.type !== 'IA' && req.query.type !== 'UE') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module type'
+      });
+    }
+    if (req.query.grade && req.query.grade !== 'Aplus' && req.query.grade !== 'A' && req.query.grade !== 'Aminus' && req.query.grade !== 'Bplus' && req.query.grade !== 'B' && req.query.grade !== 'Bminus' && req.query.grade !== 'Cplus' && req.query.grade !== 'C' && req.query.grade !== 'Dplus' && req.query.grade !== 'D' && req.query.grade !== 'F' && req.query.grade !== 'CS' && req.query.grade !== 'CU') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module grade'
+      });
+    }
+    if (req.query.su_option && req.query.su_option !== 'true' && req.query.su_option !== 'false') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module S/U option'
+      });
+    }
     app_users.find(username).fetch().subscribe(result => {
-      res.json(result.modules);
+      var modules = result.modules;
+      var found = false;
+      for (var i = 0; i < modules.length && !found; i++) {
+        for (var j = 0; j < modules[i].length && !found; j++) {
+          if (req.query.code === modules[i][j].code) {
+            found = true;
+            if (req.query.credits) {
+              modules[i][j].credits = req.query.credits;
+            }
+            if (req.query.type) {
+              modules[i][j].type = req.query.type;
+            }
+            if (req.query.grade) {
+              modules[i][j].grade = decode_grade[req.query.grade];
+            }
+            if (req.query.su_option) {
+              modules[i][j].su_option = (req.query.su_option === 'true');
+            }
+            if (modules[i][j].su_option === true) {
+              if (modules[i][j].grade === 'D' || modules[i][j].grade === 'D+' || modules[i][j].grade === 'F') {
+                modules[i][j].final_grade = 'U';
+              } else if (modules[i][j].grade !== 'Planned') {
+                modules[i][j].final_grade = 'S';
+              } else {
+                modules[i][j].final_grade = 'Planned'
+              }
+            } else {
+              modules[i][j].final_grade = modules[i][j].grade;
+            }
+          }
+        }
+      }
+      if (!found) {
+        return res.send({
+          'status': 'error',
+          'message': 'Module code not found'
+        })
+      }
+      app_users.update({
+        id: username,
+        modules: modules
+      });
+      res.send({
+        'status': 'success',
+        'message': modules
+      });
     }, err => {
       console.log(err);
       res.send(err);
     });
   });
   app.post('/users/modules/update', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing module code'
+      });
+    }
+    if (req.query.credits && req.query.credits !== parseInt(credits)) {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module credits'
+      });
+    }
+    if (req.query.type && req.query.type !== 'ULR' && req.query.type !== 'FLR' && req.query.type !== 'RCM' && req.query.type !== 'TE' && req.query.type !== 'IA' && req.query.type !== 'UE') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module type'
+      });
+    }
+    if (req.query.grade && req.query.grade !== 'Aplus' && req.query.grade !== 'A' && req.query.grade !== 'Aminus' && req.query.grade !== 'Bplus' && req.query.grade !== 'B' && req.query.grade !== 'Bminus' && req.query.grade !== 'Cplus' && req.query.grade !== 'C' && req.query.grade !== 'Dplus' && req.query.grade !== 'D' && req.query.grade !== 'F' && req.query.grade !== 'CS' && req.query.grade !== 'CU') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module grade'
+      });
+    }
+    if (req.query.su_option && req.query.su_option !== 'true' && req.query.su_option !== 'false') {
+      return res.send({
+        'status': 'error',
+        'message': 'Invalid module S/U option'
+      });
+    }
     app_users.find(username).fetch().subscribe(result => {
-      res.json(result.modules);
+      var modules = result.modules;
+      var found = false;
+      for (var i = 0; i < modules.length && !found; i++) {
+        for (var j = 0; j < modules[i].length && !found; j++) {
+          if (req.query.code === modules[i][j].code) {
+            found = true;
+            if (req.query.credits) {
+              modules[i][j].credits = req.query.credits;
+            }
+            if (req.query.type) {
+              modules[i][j].type = req.query.type;
+            }
+            if (req.query.grade) {
+              modules[i][j].grade = decode_grade[req.query.grade];
+            }
+            if (req.query.su_option) {
+              modules[i][j].su_option = (req.query.su_option === 'true');
+            }
+            if (modules[i][j].su_option === true) {
+              if (modules[i][j].grade === 'D' || modules[i][j].grade === 'D+' || modules[i][j].grade === 'F') {
+                modules[i][j].final_grade = 'U';
+              } else if (modules[i][j].grade !== 'Planned') {
+                modules[i][j].final_grade = 'S';
+              } else {
+                modules[i][j].final_grade = 'Planned'
+              }
+            } else {
+              modules[i][j].final_grade = modules[i][j].grade;
+            }
+          }
+        }
+      }
+      if (!found) {
+        return res.send({
+          'status': 'error',
+          'message': 'Module code not found'
+        })
+      }
+      app_users.update({
+        id: username,
+        modules: modules
+      });
+      res.send({
+        'status': 'success',
+        'message': modules
+      });
     }, err => {
       console.log(err);
       res.send(err);
