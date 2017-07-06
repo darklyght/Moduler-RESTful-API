@@ -1,4 +1,5 @@
 global.WebSocket = require('ws');
+const modules = require('./modules.json')
 const Horizon = require("@horizon/client/");
 const horizon = Horizon({host: 'localhost:8181'});
 const app_users = horizon('app_users');
@@ -49,6 +50,334 @@ var appRouter = function(app) {
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     next();
+  });
+
+
+  // Full modules with GET request
+  app.get('/modules/full', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send(modules[i]);
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Full modules with POST request
+  app.post('/modules/full', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send(modules[i]);
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Short modules with GET request
+  app.get('/modules/short', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleTitle': modules[i].ModuleTitle,
+          'Department': modules[i].Department,
+          'ModuleDescription': modules[i].ModuleDescription,
+          'ModuleCredit': modules[i].ModuleCredit,
+          'Workload': modules[i].Workload,
+          'Prerequisite': modules[i].Prerequisite,
+          'Preclusion': modules[i].Preclusion
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Short modules with POST request
+  app.post('/modules/short', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleTitle': modules[i].ModuleTitle,
+          'Department': modules[i].Department,
+          'ModuleDescription': modules[i].ModuleDescription,
+          'ModuleCredit': modules[i].ModuleCredit,
+          'Workload': modules[i].Workload,
+          'Prerequisite': modules[i].Prerequisite,
+          'Preclusion': modules[i].Preclusion
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module title with GET request
+  app.get('/modules/title', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleTitle': modules[i].ModuleTitle
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module title with POST request
+  app.post('/modules/title', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleTitle': modules[i].ModuleTitle
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module description with GET request
+  app.get('/modules/description', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleDescription': modules[i].ModuleDescription
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module description with POST request
+  app.post('/modules/description', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleDescription': modules[i].ModuleDescription
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module credits with GET request
+  app.get('/modules/credit', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleCredit': modules[i].ModuleCredit
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module credits with POST request
+  app.post('/modules/credit', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'ModuleCredit': modules[i].ModuleCredit
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module prerequisites with GET request
+  app.get('/modules/prerequisite', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'Prerequisite': modules[i].Prerequisite
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module prerequisites with POST request
+  app.post('/modules/prerequisite', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'Prerequisite': modules[i].Prerequisite
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module preclusions with GET request
+  app.get('/modules/preclusion', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'Preclusion': modules[i].Preclusion
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
+  });
+
+
+  // Module preclusions with POST request
+  app.post('/modules/preclusion', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing code'
+      });
+    }
+    for (var i = 0; i < modules.length; i++) {
+      if (modules[i].ModuleCode === req.query.code) {
+        return res.send({
+          'ModuleCode': modules[i].ModuleCode,
+          'Preclusion': modules[i].Preclusion
+        });
+      }
+    }
+    res.send({
+      'status': 'error',
+      'message': 'Module not found'
+    })
   });
 
 
