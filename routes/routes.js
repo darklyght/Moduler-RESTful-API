@@ -50,6 +50,9 @@ var appRouter = function(app) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     next();
   });
+
+
+  // Read modules with GET request
   app.get('/users/modules', auth, function(req, res) {
     app_users.find(username).fetch().subscribe(result => {
       res.json(result.modules);
@@ -58,6 +61,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Read modules with POST request
   app.post('/users/modules', auth, function(req, res) {
     app_users.find(username).fetch().subscribe(result => {
       res.json(result.modules);
@@ -66,6 +72,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Add module with GET request
   app.get('/users/modules/add', auth, function(req, res) {
     if (!req.query.semester) {
       return res.send({
@@ -178,6 +187,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Add module with POST request
   app.post('/users/modules/add', auth, function(req, res) {
     if (!req.query.semester) {
       return res.send({
@@ -274,6 +286,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Update module with GET request
   app.get('/users/modules/update', auth, function(req, res) {
     if (!req.query.code) {
       return res.send({
@@ -357,6 +372,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Update module with POST request
   app.post('/users/modules/update', auth, function(req, res) {
     if (!req.query.code) {
       return res.send({
@@ -440,17 +458,81 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Delete module with GET request
   app.get('/users/modules/delete', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing module code'
+      });
+    }
     app_users.find(username).fetch().subscribe(result => {
-      res.json(result.modules);
+      var modules = result.modules;
+      var found = false;
+      for (var i = 0; i < modules.length && !found; i++) {
+        for (var j = 0; j < modules[i].length && !found; j++) {
+          if (req.query.code === modules[i][j].code) {
+            found = true;
+            modules[i].splice(j, 1);
+          }
+        }
+      }
+      if (!found) {
+        return res.send({
+          'status': 'error',
+          'message': 'Module code not found'
+        })
+      }
+      app_users.update({
+        id: username,
+        modules: modules
+      });
+      res.send({
+        'status': 'success',
+        'message': modules
+      });
     }, err => {
       console.log(err);
       res.send(err);
     });
   });
+
+
+  // Delete module with POST request
   app.post('/users/modules/delete', auth, function(req, res) {
+    if (!req.query.code) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing module code'
+      });
+    }
     app_users.find(username).fetch().subscribe(result => {
-      res.json(result.modules);
+      var modules = result.modules;
+      var found = false;
+      for (var i = 0; i < modules.length && !found; i++) {
+        for (var j = 0; j < modules[i].length && !found; j++) {
+          if (req.query.code === modules[i][j].code) {
+            found = true;
+            modules[i].splice(j, 1);
+          }
+        }
+      }
+      if (!found) {
+        return res.send({
+          'status': 'error',
+          'message': 'Module code not found'
+        })
+      }
+      app_users.update({
+        id: username,
+        modules: modules
+      });
+      res.send({
+        'status': 'success',
+        'message': modules
+      });
     }, err => {
       console.log(err);
       res.send(err);
