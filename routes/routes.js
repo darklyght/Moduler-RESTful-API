@@ -867,6 +867,9 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Read shared with others with GET request
   app.get('/users/shared_with_others', auth, function(req, res) {
     app_users.find(username).fetch().subscribe(result => {
       res.json(result.shared_with_others);
@@ -875,9 +878,354 @@ var appRouter = function(app) {
       res.send(err);
     });
   });
+
+
+  // Read shared with others with POST request
+  app.post('/users/shared_with_others', auth, function(req, res) {
+    app_users.find(username).fetch().subscribe(result => {
+      res.json(result.shared_with_others);
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Add shared with others with GET request
+  app.get('/users/shared_with_others/add', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_you = result.shared_with_you;
+        shared_with_you.push(username);
+        app_users.update({
+          id: result.id,
+          shared_with_you: shared_with_you
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_others = result.shared_with_others;
+          shared_with_others.push(req.query.user);
+          app_users.update({
+            id: username,
+            shared_with_others: shared_with_others
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_others
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Add shared with others with POST request
+  app.post('/users/shared_with_others/add', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_you = result.shared_with_you;
+        shared_with_you.push(username);
+        app_users.update({
+          id: result.id,
+          shared_with_you: shared_with_you
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_others = result.shared_with_others;
+          shared_with_others.push(req.query.user);
+          app_users.update({
+            id: username,
+            shared_with_others: shared_with_others
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_others
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Delete shared with others with GET request
+  app.get('/users/shared_with_others/delete', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_you = result.shared_with_you;
+        var found = false;
+        for (var i = 0; i < shared_with_you.length && !found; i++) {
+          if (shared_with_you[i] === username) {
+            found = true;
+            shared_with_you.splice(i, 1);
+          }
+        }
+        if (!found) {
+          return res.send({
+            'status': 'error',
+            'message': 'User not found'
+          })
+        }
+        app_users.update({
+          id: result.id,
+          shared_with_you: shared_with_you
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_others = result.shared_with_others;
+          for (var i = 0; i < shared_with_others.length; i++) {
+            if (shared_with_others[i] === req.query.user) {
+              shared_with_others.splice(i, 1);
+              break;
+            }
+          }
+          app_users.update({
+            id: username,
+            shared_with_others: shared_with_others
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_others
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Delete shared with others with POST request
+  app.post('/users/shared_with_others/delete', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_you = result.shared_with_you;
+        var found = false;
+        for (var i = 0; i < shared_with_you.length && !found; i++) {
+          if (shared_with_you[i] === username) {
+            found = true;
+            shared_with_you.splice(i, 1);
+          }
+        }
+        if (!found) {
+          return res.send({
+            'status': 'error',
+            'message': 'User not found'
+          })
+        }
+        app_users.update({
+          id: result.id,
+          shared_with_you: shared_with_you
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_others = result.shared_with_others;
+          for (var i = 0; i < shared_with_others.length; i++) {
+            if (shared_with_others[i] === req.query.user) {
+              shared_with_others.splice(i, 1);
+              break;
+            }
+          }
+          app_users.update({
+            id: username,
+            shared_with_others: shared_with_others
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_others
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Read shared with you with GET request
   app.get('/users/shared_with_you', auth, function(req, res) {
     app_users.find(username).fetch().subscribe(result => {
       res.json(result.shared_with_you);
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Read shared with you with POST request
+  app.post('/users/shared_with_you', auth, function(req, res) {
+    app_users.find(username).fetch().subscribe(result => {
+      res.json(result.shared_with_you);
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Delete shared with you with GET request
+  app.get('/users/shared_with_you/delete', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_others = result.shared_with_others;
+        var found = false;
+        for (var i = 0; i < shared_with_others.length && !found; i++) {
+          if (shared_with_others[i] === username) {
+            found = true;
+            shared_with_others.splice(i, 1);
+          }
+        }
+        if (!found) {
+          return res.send({
+            'status': 'error',
+            'message': 'User not found'
+          })
+        }
+        app_users.update({
+          id: result.id,
+          shared_with_others: shared_with_others
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_you = result.shared_with_you;
+          for (var i = 0; i < shared_with_you.length; i++) {
+            if (shared_with_you[i] === req.query.user) {
+              shared_with_you.splice(i, 1);
+              break;
+            }
+          }
+          app_users.update({
+            id: username,
+            shared_with_you: shared_with_you
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_you
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
+    }, err => {
+      console.log(err);
+      res.send(err);
+    });
+  });
+
+
+  // Delete shared with you with POST request
+  app.post('/users/shared_with_you/delete', auth, function(req, res) {
+    if (!req.query.user) {
+      return res.send({
+        'status': 'error',
+        'message': 'Missing user'
+      });
+    }
+    app_users.find(req.query.user).fetch().subscribe(result => {
+      if (result) {
+        var shared_with_others = result.shared_with_others;
+        var found = false;
+        for (var i = 0; i < shared_with_others.length && !found; i++) {
+          if (shared_with_others[i] === username) {
+            found = true;
+            shared_with_others.splice(i, 1);
+          }
+        }
+        if (!found) {
+          return res.send({
+            'status': 'error',
+            'message': 'User not found'
+          })
+        }
+        app_users.update({
+          id: result.id,
+          shared_with_others: shared_with_others
+        });
+        app_users.find(username).fetch().subscribe(result => {
+          var shared_with_you = result.shared_with_you;
+          for (var i = 0; i < shared_with_you.length; i++) {
+            if (shared_with_you[i] === req.query.user) {
+              shared_with_you.splice(i, 1);
+              break;
+            }
+          }
+          app_users.update({
+            id: username,
+            shared_with_you: shared_with_you
+          });
+          res.send({
+            'status': 'success',
+            'message': shared_with_you
+          });
+        });
+      }
+      else {
+        res.send({
+          'status': 'error',
+          'message': 'User not found'
+        });
+      }
     }, err => {
       console.log(err);
       res.send(err);
