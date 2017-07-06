@@ -19,7 +19,7 @@ const auth = function(req, res, next) {
     return unauthorized(res);
   }
   app_users.find(user.name).fetch().subscribe(result => {
-    if (result && user.pass === result.login_data.password) {
+    if (result && user.pass === result.api_key) {
       username = user.name;
       return next();
     } else {
