@@ -1,0 +1,23 @@
+{
+  "name": "Moduler API",
+  "version": "0.1.0",
+  "description": "API documentation for the Moduler API<br />Use your Moduler username and API key for HTTP authentication.",
+  "order": [
+    "ReadModuleFull",
+    "ReadModuleShort",
+    "ReadModuleTitle",
+    "ReadModuleDescription",
+    "ReadModuleCredits",
+    "ReadModulePrerequisite",
+    "ReadModulePreclusion",
+    "ReadUserModules",
+    "AddUserModules",
+    "UpdateUserModules",
+    "DeleteUserModules",
+    "ReadUserSharedWithOthers",
+    "AddUserSharedWithOthers",
+    "DeleteUserSharedWithOthers",
+    "ReadUserSharedWithYou",
+    "DeleteUserSharedWithYou"
+  ]
+}
